@@ -30,15 +30,26 @@ const errorMsg = ref<string | null>(null);
 const mode = ref<"create" | "import">("import");
 
 onMounted(async () => {
-  await loadCachedJavaList();
+  await loadDefaultSettings();
 });
 
-async function loadCachedJavaList() {
+async function loadDefaultSettings() {
   try {
     const settings = await settingsApi.get();
+
+    // Load default values from settings
+    maxMemory.value = String(settings.default_max_memory);
+    minMemory.value = String(settings.default_min_memory);
+    port.value = String(settings.default_port);
+
+    // Load cached Java list
     if (settings.cached_java_list && settings.cached_java_list.length > 0) {
       javaList.value = settings.cached_java_list;
-      if (javaList.value.length > 0) {
+
+      // Auto-select Java: prefer default_java_path, then recommended version
+      if (settings.default_java_path) {
+        selectedJava.value = settings.default_java_path;
+      } else if (javaList.value.length > 0) {
         const preferred = javaList.value.find(
           (j) => j.is_64bit && j.major_version >= 17
         );
@@ -46,7 +57,7 @@ async function loadCachedJavaList() {
       }
     }
   } catch (e) {
-    console.error("Failed to load cached Java list:", e);
+    console.error("Failed to load default settings:", e);
   }
 }
 

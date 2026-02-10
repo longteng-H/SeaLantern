@@ -10,20 +10,6 @@ use commands::system as system_commands;
 use commands::player as player_commands;
 use commands::settings as settings_commands;
 
-use std::sync::OnceLock;
-use services::server_manager::ServerManager;
-use services::settings_manager::SettingsManager;
-
-fn global_server_manager() -> &'static ServerManager {
-    static INSTANCE: OnceLock<ServerManager> = OnceLock::new();
-    INSTANCE.get_or_init(ServerManager::new)
-}
-
-fn global_settings_manager() -> &'static SettingsManager {
-    static INSTANCE: OnceLock<SettingsManager> = OnceLock::new();
-    INSTANCE.get_or_init(SettingsManager::new)
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -67,9 +53,9 @@ pub fn run() {
         ])
         .on_window_event(|_window, event| {
             if let tauri::WindowEvent::CloseRequested { .. } = event {
-                let settings = global_settings_manager().get();
+                let settings = services::global::settings_manager().get();
                 if settings.close_servers_on_exit {
-                    global_server_manager().stop_all_servers();
+                    services::global::server_manager().stop_all_servers();
                 }
             }
         })

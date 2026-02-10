@@ -7,6 +7,7 @@ import { useServerStore } from "../stores/serverStore";
 import { useConsoleStore } from "../stores/consoleStore";
 import { serverApi } from "../api/server";
 import { playerApi } from "../api/player";
+import { settingsApi } from "../api/settings";
 
 const route = useRoute();
 const serverStore = useServerStore();
@@ -19,6 +20,7 @@ const showSuggestions = ref(false);
 const suggestionIndex = ref(0);
 const commandHistory = ref<string[]>([]);
 const historyIndex = ref(-1);
+const consoleFontSize = ref(13);
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 
 const allCommands = [
@@ -76,6 +78,14 @@ function switchServer(id: string | number) {
 }
 
 onMounted(async () => {
+  // Load console font size from settings
+  try {
+    const settings = await settingsApi.get();
+    consoleFontSize.value = settings.console_font_size;
+  } catch (e) {
+    console.error("Failed to load settings:", e);
+  }
+
   await serverStore.refreshList();
   if (serverId.value) {
     consoleStore.setActiveServer(serverId.value);
@@ -240,7 +250,7 @@ function getStatusText(): string {
         </div>
       </div>
 
-      <div class="console-output" ref="logContainer" @scroll="handleScroll">
+      <div class="console-output" ref="logContainer" @scroll="handleScroll" :style="{ fontSize: consoleFontSize + 'px' }">
         <div v-for="(line, i) in currentLogs" :key="i" class="log-line" :class="{
           'log-error': line.includes('[ERROR]') || line.includes('ERROR') || line.includes('[STDERR]'),
           'log-warn': line.includes('[WARN]') || line.includes('WARNING'),
@@ -259,7 +269,7 @@ function getStatusText(): string {
         </div>
         <div class="console-input-bar">
           <span class="input-prefix">&gt;</span>
-          <input class="console-input" v-model="commandInput" placeholder="输入命令... (Tab 补全)" @keydown="handleKeydown" />
+          <input class="console-input" v-model="commandInput" placeholder="输入命令... (Tab 补全)" @keydown="handleKeydown" :style="{ fontSize: consoleFontSize + 'px' }" />
           <SLButton variant="primary" size="sm" @click="sendCommand()">发送</SLButton>
         </div>
       </div>
@@ -288,7 +298,7 @@ function getStatusText(): string {
 .quick-groups { display: flex; gap: 4px; }
 .quick-btn { padding: 3px 10px; border-radius: var(--sl-radius-sm); font-size: 0.75rem; cursor: pointer; border: 1px solid var(--sl-border); color: var(--sl-text-secondary); background: var(--sl-bg-secondary); white-space: nowrap; transition: all var(--sl-transition-fast); }
 .quick-btn:hover { border-color: var(--sl-primary); color: var(--sl-primary); background: var(--sl-primary-bg); }
-.console-output { flex: 1; background: #f8fafc; border: 1px solid var(--sl-border-light); border-radius: var(--sl-radius-md); padding: var(--sl-space-md); overflow-y: auto; font-family: var(--sl-font-mono); font-size: 0.8125rem; line-height: 1.7; color: var(--sl-text-primary); min-height: 0; user-select: text; -webkit-user-select: text; cursor: text; }
+.console-output { flex: 1; background: #f8fafc; border: 1px solid var(--sl-border-light); border-radius: var(--sl-radius-md); padding: var(--sl-space-md); overflow-y: auto; font-family: var(--sl-font-mono); line-height: 1.7; color: var(--sl-text-primary); min-height: 0; user-select: text; -webkit-user-select: text; cursor: text; }
 .log-line { white-space: pre-wrap; word-break: break-all; }
 .log-error { color: #dc2626; font-weight: 500; }
 .log-warn { color: #ea580c; font-weight: 500; }
@@ -303,6 +313,6 @@ function getStatusText(): string {
 .suggestion-hint { padding: 4px 14px; font-size: 0.6875rem; color: var(--sl-text-tertiary); border-top: 1px solid var(--sl-border-light); }
 .console-input-bar { display: flex; align-items: center; gap: var(--sl-space-sm); padding: var(--sl-space-sm) var(--sl-space-md); background: var(--sl-surface); border: 1px solid var(--sl-border-light); border-radius: var(--sl-radius-md); }
 .input-prefix { color: var(--sl-primary); font-family: var(--sl-font-mono); font-weight: 700; }
-.console-input { flex: 1; background: transparent; color: var(--sl-text-primary); font-family: var(--sl-font-mono); font-size: 0.8125rem; padding: 6px 0; border: none; outline: none; }
+.console-input { flex: 1; background: transparent; color: var(--sl-text-primary); font-family: var(--sl-font-mono); padding: 6px 0; border: none; outline: none; }
 .console-input::placeholder { color: var(--sl-text-tertiary); }
 </style>

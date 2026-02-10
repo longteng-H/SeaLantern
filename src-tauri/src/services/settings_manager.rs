@@ -36,11 +36,18 @@ impl SettingsManager {
 }
 
 fn get_data_dir() -> String {
-    if let Ok(exe) = std::env::current_exe() {
-        if let Some(dir) = exe.parent() {
-            return dir.to_string_lossy().to_string();
+    // Use a consistent data directory regardless of dev/prod mode
+    // Try to use the user's home directory first
+    if let Some(home_dir) = dirs_next::home_dir() {
+        let data_dir = home_dir.join(".sea-lantern");
+        // Create directory if it doesn't exist
+        if let Err(e) = std::fs::create_dir_all(&data_dir) {
+            eprintln!("Warning: Failed to create data directory: {}", e);
         }
+        return data_dir.to_string_lossy().to_string();
     }
+
+    // Fallback to current directory
     ".".to_string()
 }
 

@@ -1,30 +1,24 @@
-use std::sync::OnceLock;
 use crate::models::settings::AppSettings;
-use crate::services::settings_manager::SettingsManager;
-
-fn settings_mgr() -> &'static SettingsManager {
-    static INSTANCE: OnceLock<SettingsManager> = OnceLock::new();
-    INSTANCE.get_or_init(SettingsManager::new)
-}
+use crate::services::global;
 
 #[tauri::command]
 pub fn get_settings() -> AppSettings {
-    settings_mgr().get()
+    global::settings_manager().get()
 }
 
 #[tauri::command]
 pub fn save_settings(settings: AppSettings) -> Result<(), String> {
-    settings_mgr().update(settings)
+    global::settings_manager().update(settings)
 }
 
 #[tauri::command]
 pub fn reset_settings() -> Result<AppSettings, String> {
-    settings_mgr().reset()
+    global::settings_manager().reset()
 }
 
 #[tauri::command]
 pub fn export_settings() -> Result<String, String> {
-    let s = settings_mgr().get();
+    let s = global::settings_manager().get();
     serde_json::to_string_pretty(&s).map_err(|e| format!("Export failed: {}", e))
 }
 
@@ -32,6 +26,6 @@ pub fn export_settings() -> Result<String, String> {
 pub fn import_settings(json: String) -> Result<AppSettings, String> {
     let s: AppSettings = serde_json::from_str(&json)
         .map_err(|e| format!("Invalid JSON: {}", e))?;
-    settings_mgr().update(s.clone())?;
+    global::settings_manager().update(s.clone())?;
     Ok(s)
 }
