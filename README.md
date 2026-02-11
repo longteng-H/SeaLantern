@@ -15,10 +15,12 @@ Minecraft 服务器管理工具 · Tauri 2 + Rust + Vue 3
 - 关软件的时候自动帮你停服务器，不会丢存档
 - 检查更新，一键下载新版本
 
-
 ## 快速开始
 
-需要 Node.js 20+ 和 Rust 1.70+。
+- 如果你是使用者，在右侧下载Release版本
+
+- 如果你是开发者，需要 Node.js 20+ 和 Rust 1.70+。
+
 
 ```bash
 git clone https://gitee.com/fps_z/SeaLantern.git
@@ -40,7 +42,7 @@ npm run tauri build
 
 - **前端**: Vue 3 + TypeScript + Vite + Pinia
 - **后端**: Rust + Tauri 2
-- **样式**: 纯 CSS（毛玻璃效果）
+- **样式**: 纯 CSS
 - **通信**: Tauri invoke（前端调 Rust 函数，直接拿返回值）
 
 没有 Electron，没有 Node 后端，没有 Webpack。启动快，体积小，内存省。
