@@ -7,7 +7,7 @@
 **项目名称**: 海晶灯 (Sea Lantern)
 **项目类型**: Minecraft 服务器管理工具
 **技术栈**: Tauri 2 + Rust + Vue 3 + TypeScript + Pinia
-**当前版本**: 0.1.1
+**当前版本**: 0.1.3
 **仓库地址**: https://gitee.com/fps_z/SeaLantern
 
 ### 核心特点
@@ -21,10 +21,7 @@
 ## 关键文件速查表
 
 ### 版本号相关（修改版本时必须同步更新）
-1. `package.json` - `"version": "0.1.1"`
-2. `src-tauri/Cargo.toml` - `version = "0.1.1"`
-3. `src-tauri/tauri.conf.json` - `"version": "0.1.1"`
-4. 关于页面的版本号
+src/utils/version.ts 中的 APP_VERSION
 
 ### 配置文件
 - `vite.config.ts` - Vite 构建配置，开发服务器端口 1420

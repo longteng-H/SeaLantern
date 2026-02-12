@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeMount } from "vue";
+import { ref, onMounted, onBeforeMount, computed } from "vue";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import SLCard from "../components/common/SLCard.vue";
 import SLButton from "../components/common/SLButton.vue";
 import { contributors as contributorsList } from "../data/contributors";
-import { checkUpdate, openDownloadUrl, type UpdateInfo } from "../api/update";
+import { checkUpdate, downloadAndInstall, restartApp, type UpdateInfo, type UpdateProgress } from "../api/update";
+import { APP_VERSION, BUILD_YEAR } from "../utils/version";
 
 console.log('[AboutView] 脚本开始执行');
 
-const version = "0.1.2";
-const buildDate = "2026";
+const version = APP_VERSION;
+const buildDate = BUILD_YEAR;
 
 const contributors = ref(contributorsList);
 
@@ -17,6 +18,8 @@ const contributors = ref(contributorsList);
 const isCheckingUpdate = ref(false);
 const updateInfo = ref<UpdateInfo | null>(null);
 const updateError = ref<string | null>(null);
+const isDownloading = ref(false);
+const downloadProgress = ref<UpdateProgress>({ downloaded: 0, total: 0 });
 
 onBeforeMount(() => {
   console.log('[AboutView] onBeforeMount - 组件即将挂载');
@@ -48,10 +51,19 @@ async function handleCheckUpdate() {
   updateInfo.value = null;
 
   try {
-    // 替换为你的Gitee用户名和仓库名
-    const info = await checkUpdate("fps_z", "SeaLantern");
+    const info = await checkUpdate();
     console.log('[AboutView] 更新信息:', info);
-    updateInfo.value = info;
+
+    if (info) {
+      updateInfo.value = info;
+    } else {
+      // 没有更新
+      updateInfo.value = {
+        has_update: false,
+        latest_version: version,
+        current_version: version,
+      };
+    }
   } catch (error) {
     console.error('[AboutView] 检查更新失败:', error);
     updateError.value = error as string;
@@ -60,19 +72,36 @@ async function handleCheckUpdate() {
   }
 }
 
-// 下载更新
+// 下载并安装更新
 async function handleDownloadUpdate() {
   console.log('[AboutView] 开始下载更新');
-  if (updateInfo.value?.download_url) {
-    try {
-      await openDownloadUrl(updateInfo.value.download_url);
-      console.log('[AboutView] 下载链接已打开');
-    } catch (error) {
-      console.error('[AboutView] 打开下载链接失败:', error);
-      alert(`打开下载链接失败: ${error}`);
+  isDownloading.value = true;
+  updateError.value = null;
+
+  try {
+    await downloadAndInstall((progress) => {
+      downloadProgress.value = progress;
+    });
+
+    // 下载完成，提示重启
+    const shouldRestart = confirm('更新已下载完成，是否立即重启应用？');
+    if (shouldRestart) {
+      await restartApp();
     }
+  } catch (error) {
+    console.error('[AboutView] 下载更新失败:', error);
+    updateError.value = `下载失败: ${error}`;
+  } finally {
+    isDownloading.value = false;
   }
 }
+
+// 计算下载进度文本
+const downloadProgressText = computed(() => {
+  if (downloadProgress.value.total === 0) return '';
+  const percent = Math.round((downloadProgress.value.downloaded / downloadProgress.value.total) * 100);
+  return `${percent}%`;
+});
 
 console.log('[AboutView] 脚本执行完成');
 </script>
@@ -213,9 +242,10 @@ console.log('[AboutView] 脚本执行完成');
                 variant="primary"
                 size="sm"
                 @click="handleDownloadUpdate"
+                :disabled="isDownloading"
                 style="width: 100%; margin-top: 8px"
               >
-                下载更新
+                {{ isDownloading ? `下载中... ${downloadProgressText}` : '下载并安装' }}
               </SLButton>
             </div>
             <div v-else class="update-latest">

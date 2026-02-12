@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "notes": "更新内容：\n- 新功能：支持自动更新\n- 修复bug：无法使用玩家管理\n- 性能优化：解决日志重复输出问题；优化代码逻辑",
+  "pub_date": "2026-02-12T11:00:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "",
+      "url": "https://foruda.gitee.com/attach_file/1770865253423671646/sealantern_0.2.0_x64-setup.exe?token=7d2e16ef53033eb4a94c5926cebe187c&ts=1770865262&attname=Sea%20Lantern_0.2.0_x64-setup.exe"
+    }
+  }
+}

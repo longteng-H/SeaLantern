@@ -1,6 +1,6 @@
 [package]
 name = "sea-lantern"
-version = "0.1.2"
+version = "0.2.0"
 description = "Minecraft Server Manager"
 authors = ["FPS_Z"]
 edition = "2021"
@@ -23,3 +23,4 @@ uuid = { version = "1", features = ["v4"] }
 dirs-next = "2"
 reqwest = { version = "0.12", features = ["json"] }
 opener = "0.7"
+tauri-plugin-updater = "2.10.0"
