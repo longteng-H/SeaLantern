@@ -31,6 +31,18 @@ export const contributors: Contributor[] = [
     avatar: "https://mc-heads.net/avatar/Alex/64",
     //url: "https://gitee.com/fps_z",
   },
+  {
+    name: "烬白Jinby",
+    role: "自定义配色/宣传",
+    avatar: "https://mc-heads.net/avatar/Jinby_6325/64",
+    //url: "https://gitee.com/fps_z",
+  },  
+  {
+    name: "凋空零",
+    role: "修复文档bug",
+    avatar: "https://mc-heads.net/avatar/Alex/64",
+    //url: "https://gitee.com/fps_z",
+  },
   
   // ============================================
   // 在这里添加更多贡献者！

@@ -24,7 +24,7 @@ Minecraft 服务器管理工具 · Tauri 2 + Rust + Vue 3
 
 ```bash
 git clone https://gitee.com/fps_z/SeaLantern.git
-cd sea-lantern
+cd SeaLantern
 npm install
 npm run tauri dev
 ```
