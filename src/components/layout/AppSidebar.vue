@@ -67,15 +67,11 @@ const iconMap: Record<string, string> = {
         <transition name="fade">
           <div v-if="!ui.sidebarCollapsed" class="nav-group-label">{{ group.label }}</div>
         </transition>
-        <div
-          v-for="item in navItems.filter(i => i.group === group.key)"
-          :key="item.name"
-          class="nav-item"
-          :class="{ active: isActive(item.path) }"
-          @click="navigateTo(item.path)"
-          :title="ui.sidebarCollapsed ? item.label : ''"
-        >
-          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <div v-for="item in navItems.filter(i => i.group === group.key)" :key="item.name" class="nav-item"
+          :class="{ active: isActive(item.path) }" @click="navigateTo(item.path)"
+          :title="ui.sidebarCollapsed ? item.label : ''">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path :d="iconMap[item.icon] || iconMap.info" />
           </svg>
           <transition name="fade">
@@ -88,7 +84,9 @@ const iconMap: Record<string, string> = {
 
     <div class="sidebar-footer">
       <div class="nav-item collapse-btn" @click="ui.toggleSidebar()">
-        <svg class="nav-icon" :style="{ transform: ui.sidebarCollapsed ? 'rotate(180deg)' : '' }" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="nav-icon" :style="{ transform: ui.sidebarCollapsed ? 'rotate(180deg)' : '' }" width="20" height="20"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+          stroke-linejoin="round">
           <path :d="iconMap.chevron" />
         </svg>
         <transition name="fade">
@@ -100,21 +98,128 @@ const iconMap: Record<string, string> = {
 </template>
 
 <style scoped>
-.sidebar { position: fixed; top: 0; left: 0; width: var(--sl-sidebar-width); height: 100vh; display: flex; flex-direction: column; z-index: 100; border-right: 1px solid var(--sl-border-light); transition: width var(--sl-transition-normal); overflow: hidden; }
-.sidebar.collapsed { width: var(--sl-sidebar-collapsed-width); }
-.sidebar-logo { display: flex; align-items: center; gap: var(--sl-space-sm); padding: var(--sl-space-md); height: 60px; cursor: pointer; flex-shrink: 0; }
-.logo-icon { flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.logo-text { font-size: 1.125rem; font-weight: 700; white-space: nowrap; letter-spacing: -0.01em; }
-.sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: var(--sl-space-sm); }
-.nav-group { margin-bottom: var(--sl-space-sm); }
-.nav-group-label { padding: var(--sl-space-xs) var(--sl-space-sm); font-size: 0.6875rem; font-weight: 600; color: var(--sl-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
-.nav-item { display: flex; align-items: center; gap: var(--sl-space-sm); padding: 8px 12px; border-radius: var(--sl-radius-md); cursor: pointer; color: var(--sl-text-secondary); transition: all var(--sl-transition-fast); position: relative; white-space: nowrap; }
-.nav-item:hover { background-color: var(--sl-primary-bg); color: var(--sl-primary); }
-.nav-item.active { background-color: var(--sl-primary-bg); color: var(--sl-primary); font-weight: 500; }
-.nav-active-indicator { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 16px; background-color: var(--sl-primary); border-radius: var(--sl-radius-full); }
-.nav-icon { flex-shrink: 0; transition: transform var(--sl-transition-normal); }
-.nav-label { font-size: 0.875rem; white-space: nowrap; }
-.sidebar-footer { flex-shrink: 0; padding: var(--sl-space-sm); border-top: 1px solid var(--sl-border-light); }
-.fade-enter-active, .fade-leave-active { transition: opacity 0.15s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sl-sidebar-width);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  border-right: 1px solid var(--sl-border-light);
+  transition: width var(--sl-transition-normal);
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: var(--sl-sidebar-collapsed-width);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-space-sm);
+  padding: var(--sl-space-md);
+  height: 60px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-text {
+  font-size: 1.125rem;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--sl-space-sm);
+}
+
+.nav-group {
+  margin-bottom: var(--sl-space-sm);
+}
+
+.nav-group-label {
+  padding: var(--sl-space-xs) var(--sl-space-sm);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--sl-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sl-space-sm);
+  padding: 8px 12px;
+  border-radius: var(--sl-radius-md);
+  cursor: pointer;
+  color: var(--sl-text-secondary);
+  transition: all var(--sl-transition-fast);
+  position: relative;
+  white-space: nowrap;
+  margin-top: 5px;
+}
+
+.nav-item:hover {
+  background-color: var(--sl-primary-bg);
+  color: var(--sl-primary);
+}
+
+.nav-item.active {
+  background-color: var(--sl-primary-bg);
+  color: var(--sl-primary);
+  font-weight: 500;
+}
+
+.nav-active-indicator {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 16px;
+  background-color: var(--sl-primary);
+  border-radius: var(--sl-radius-full);
+}
+
+.nav-icon {
+  flex-shrink: 0;
+  transition: transform var(--sl-transition-normal);
+}
+
+.nav-label {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.sidebar-footer {
+  flex-shrink: 0;
+  padding: var(--sl-space-sm);
+  border-top: 1px solid var(--sl-border-light);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
